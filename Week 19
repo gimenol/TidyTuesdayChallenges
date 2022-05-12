@@ -1,0 +1,74 @@
+# Get the Data
+library(ggrepel)
+library(readr)
+library(tidyverse)
+
+# Import the data 
+nyt_titles <- readr::read_tsv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-05-10/nyt_titles.tsv')
+nyt_full <- readr::read_tsv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-05-10/nyt_full.tsv')
+
+# Create new variable to identify decades
+attach(nyt_titles)
+nyt_titles$decade[year >= 1930 & year < 1940] <-"1930"
+nyt_titles$decade[year >= 1940 & year < 1950] <-"1940"
+nyt_titles$decade[year >= 1950 & year < 1960] <-"1950"
+nyt_titles$decade[year >= 1960 & year < 1970] <-"1960"
+nyt_titles$decade[year >= 1970 & year < 1980] <-"1970"
+nyt_titles$decade[year >= 1980 & year < 1990] <-"1980"
+nyt_titles$decade[year >= 1990 & year < 2000] <-"1990"
+nyt_titles$decade[year >= 2000 & year < 2010] <-"2000"
+nyt_titles$decade[year >= 2010 & year < 2020] <-"2010"
+nyt_titles$decade[year == 2020] <- "2020"
+
+# Convert titles from all caps to title case 
+nyt_titles$title <- str_to_title(nyt_titles$title)
+
+# Generate the plot
+ggplot() + 
+  geom_point(nyt_titles, mapping = aes(x = year, y = total_weeks, fill = decade), pch = 21) +
+  scale_fill_brewer(type = "qual", palette = "Spectral", name = "Decade") + 
+  scale_x_continuous(breaks=seq(1930,2020,10)) +
+  labs(
+    title = "Longest stay in the NYT Best Sellers list by decade",
+    subtitle = "The 90s was the era of the long-stay Best Seller",
+    x = "Year",
+    y = "Total weeks on NYT Best Sellers list",
+    caption = 'Source: Post 45 Data Collective / Graphic: Laura Gimeno'
+  ) + 
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 84 & decade == 1930), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 110 & decade == 1940), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 120 & decade == 1950), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction = "both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 95 & decade == 1960), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 79 & decade == 1970), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 55 & decade == 1980), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 170 & decade == 1990), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") +
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 150 & decade == 2000), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction ="both") + 
+  geom_text_repel(data = subset(nyt_titles, total_weeks > 125 & decade == 2010), 
+                  aes(x = year, y = total_weeks, label = title), segment.color = "grey50", 
+                  point.padding = 0.5, box.padding = 0.5, size = 4, min.segment.length = 0.1,
+                  force = 100, direction = "both") + 
+  theme_minimal()
